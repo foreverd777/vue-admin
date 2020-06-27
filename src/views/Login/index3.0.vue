@@ -8,13 +8,13 @@
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="login-form" size="medium">
             
             <el-form-item prop="username" class="item-form">
-                <label for="username">邮箱</label>
-                <el-input id="username" type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
+                <label>邮箱</label>
+                <el-input type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
             </el-form-item>
             
             <el-form-item  prop="password" class="item-form">
-                <label for="password">密码</label>
-                <el-input id="password" type="text" v-model="ruleForm.password" autocomplete="off" maxlength="20" minlength="6"></el-input>
+                <label>密码</label>
+                <el-input type="text" v-model="ruleForm.password" autocomplete="off" maxlength="20" minlength="6"></el-input>
             </el-form-item>
 
              <el-form-item  prop="passwords" class="item-form" v-show="model === 'register'">
@@ -28,14 +28,13 @@
                     <el-col :span="15"> 
                         <el-input v-model.number="ruleForm.code" maxlength="6" minlength="6"></el-input></el-col>
                     <el-col :span="9">
-                        <el-button type="success" class="block" @click="getSms()">获取验证码</el-button>
+                        <el-button type="success" class="block">获取验证码</el-button>
                         </el-col>
                  </el-row>             
             </el-form-item>
           
             <el-form-item>
-                <el-button type="danger" @click="submitForm('ruleForm')" class="login-btn block" :disabled="loginButtonStatus">
-                  {{model==="login"? "登录" : "注册"}}</el-button>               
+                <el-button type="danger" @click="submitForm('ruleForm')" class="login-btn block">提交</el-button>               
             </el-form-item>
          </el-form>
     </div>
@@ -43,23 +42,13 @@
 </template>
 
 <script>
-import {GetSms} from '@/api/login'
+import axios from 'axios'
 import {reactive, ref, isRef, toRefs, onMounted} from '@vue/composition-api'
 import {stripscript , validateEmail, validatePass, validateVCode} from '@/utils/validate'
 export default {
     name: 'login',
-    /*setup(props, context){
-      console.log(context);
-        attrs: (...) == this.&attrs
-        emit: (...) == this.$emit
-        isServer: (...) == this.$isServer
-        listeners: (...) == this.$listeners
-        parent: (...) == this.parent
-        refs: (...) == this.refs
-        root: (...) == this
-        */
-      
-    setup(props, {refs, root}){
+    setup(props, context){
+
       //验证用户名
       let validateUsername = (rule, value, callback) => {  
         if (value === '') {
@@ -126,8 +115,6 @@ export default {
     
     //模块值
     const model = ref('login')
-    //登录按钮禁用状态
-    const loginButtonStatus = ref(true);
     //表单绑定数据
     const ruleForm = reactive({
              username: '',
@@ -151,9 +138,9 @@ export default {
               ]
             })
 
-/**
- * 声明函数
- */
+    /**
+     * 声明函数
+     */
     const toggleMenu = (data => {
       console.log(data)
       menuTab.forEach(element => {
@@ -165,43 +152,17 @@ export default {
       model.value = data.type
       })
 
-    /**
-     * 获取验证码
-     */
-    const getSms = (() => {
-      //进行提示
-      if(ruleForm.username == ""){
-          root.$message({
-          showClose: true,
-          message: '邮箱不能为空!',
-          type: 'error'
-        });
-        return false;
-      }
-      if(validateEmail(ruleForm.username)){
-        root.$message({
-          showClose: true,
-          message: '邮箱格式有误!',
-          type: 'error'
-        });
-        return false;
-      }
-      
-      let data = {
-        username : ruleForm.username,
-        module: 'register'
-        }
-      GetSms(data).then(response => {
-
-      }).catch(error => {
-        console.log(error);
-      })
-    })
-
-    /**
-     * 提交表单
-     */
     const submitForm = (formName => {
+
+    // 为给定 ID 的 user 创建请求
+    axios.get('/user?ID=12345')
+    .then(function (response) {
+        console.log(response);
+    })
+    .catch(function (error) {
+        console.log(error);
+    });
+
       context.refs[formName].validate((valid) => {
           if (valid) {
             alert('submit!');
@@ -220,18 +181,17 @@ export default {
      */
     //挂载完成后
     onMounted(() => {
-      
+
     })
 
     return {
       menuTab,
       model,
-      loginButtonStatus,
       ruleForm,
       rules,
       toggleMenu,
-      submitForm,
-      getSms
+      submitForm
+      
     }
 
     },
