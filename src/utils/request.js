@@ -15,6 +15,11 @@ const service = axios.create({
 service.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
+    //后台需要前端这边传相关的参数（在请求头添加参数）
+    
+    //根据业务需求添加
+    config.headers['userid'] = '11111';
+
     return config;
   },
   function(error) {
@@ -24,10 +29,15 @@ service.interceptors.request.use(
 );
 
 // 添加响应拦截器
+/**
+ * 请求接口后，返回数据进行拦截
+ */
 service.interceptors.response.use(
   function(response) {
     // 对响应数据做点什么
     let data = response.data;
+    //添加业务需求
+    
     if (data.resCode !== 0) {
       Message.error(data.message);
       return Promise.reject(data);

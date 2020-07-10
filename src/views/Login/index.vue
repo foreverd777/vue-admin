@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import sha1 from 'js-sha1';
 import { GetSms, Register, Login } from "@/api/login";
 import { reactive, ref, isRef, toRefs, onMounted } from "@vue/composition-api";
 import {
@@ -205,8 +206,14 @@ export default {
     });
 
     /**
+     * 1、不建议在一个方法里做多件不同的事情（尽可能只做该方法本身的事情)
+     * 2、尽量把相同的事情封装在一个方法里，通过调用函数进行执行
+     */
+    /**
      * 声明函数***************************************************************************
      */
+
+    //切换模块
     const toggleMenu = (data) => {
       menuTab.forEach((element) => {
         element.current = false;
@@ -215,11 +222,20 @@ export default {
       data.current = true;
       //修改模块值
       model.value = data.type;
+      resetFormData();
+      clearCountDown();
+    };
+    //清除表单数据
+    const resetFormData= (() => {
       //重置表单
       //this.$refs[formName].resetFields(); vue2.0
       refs["loginForm"].resetFields(); //vue3.0
-    };
-
+    })
+    //更新按钮状态
+    const updateButtonStatus = ((params) => {
+      codeButtonStatus.status = params.status;
+      codeButtonStatus.text = params.text;
+    })
     /**
      * 获取验证码
      */
@@ -247,8 +263,10 @@ export default {
         module: model.value,
       };
       //修改获取验证码按钮状态
-      codeButtonStatus.status = true;
-      codeButtonStatus.text = "发送中";
+      updateButtonStatus({  
+        status: true,
+        text: "发送中"
+      })
 
       GetSms(requestdata)
         .then((response) => {
@@ -304,6 +322,11 @@ export default {
             message: data.message,
             type: "success",
           });
+        //页面跳转
+        root.$router.push({
+          name: 'Console'
+        });
+
         })
         .catch((error) => {});
     };
@@ -314,7 +337,7 @@ export default {
     const register = () => {
       let requestData = {
         username: ruleForm.username,
-        password: ruleForm.password,
+        password: sha1(ruleForm.password),
         code: ruleForm.code,
         module: "register",
       };
@@ -350,8 +373,10 @@ export default {
         time--;
         if (time === 0) {
           clearInterval(timer.value);
-          codeButtonStatus.status = false;
-          codeButtonStatus.text = "再次获取";
+          updateButtonStatus({  
+            status: false,
+            text: "再次获取"
+          })
         } else {
           codeButtonStatus.text = `倒计时${time}秒`; //这是ES6写法，ES5：'倒计时'+time+'秒'
           //time--;
@@ -364,8 +389,10 @@ export default {
      */
     const clearCountDown = () => {
       //还原验证码默认状态
-      codeButtonStatus.status = false;
-      codeButtonStatus.text = "获取验证码";
+      updateButtonStatus({  
+            status: false,
+            text: "获取验证码"
+          })
       //清除倒计时
       clearInterval(timer.value);
     };
