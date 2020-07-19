@@ -13,7 +13,7 @@ export default {
         iconClass:{
             type: String,  //定义接收的值类型
             default: "defaut",
-            required: true,  //设置是否必须传值
+            //required: true,  //设置是否必须传值
             /* validator: (value)=>{
                 return value >= 0   //验证传入的值是否符合规则
             } */
@@ -21,12 +21,10 @@ export default {
         className:{
             type: String,  //定义接收的值类型
             default: "defaut",
-            required: true,  //设置是否必须传值
+            //required: true,  //设置是否必须传值
         }
     },
     setup(props){
-        const msg = ref("gogogogogo");
-       
        //计算属性，得出最终结果，并返回
        const iconName = computed(() => `#icon-${props.iconClass}`)
        const svgClass = computed(() => {
@@ -49,8 +47,7 @@ export default {
         //     set: val => { number.value = val - 1 }
         // })
 
-        return{
-            msg,
+        return{      
             iconName,
             svgClass
         }

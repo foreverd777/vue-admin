@@ -315,8 +315,8 @@ export default {
         password: ruleForm.password,
         code: ruleForm.code,
       };
-      Login(requestData)
-        .then((response) => {
+      
+      root.$store.dispatch('app/login', requestData).then((response) => {
           let data = response.data;
           root.$message({
             message: data.message,
@@ -330,6 +330,22 @@ export default {
         })
         .catch((error) => {});
     };
+      
+     /*  Login(requestData)
+        .then((response) => {
+          let data = response.data;
+          root.$message({
+            message: data.message,
+            type: "success",
+          });
+        //页面跳转
+        root.$router.push({
+          name: 'Console'
+        });
+
+        })
+        .catch((error) => {});
+    }; */
 
     /**
      * 注册
