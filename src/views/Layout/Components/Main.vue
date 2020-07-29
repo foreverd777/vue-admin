@@ -29,7 +29,8 @@ export default {
 @import "../../../styles/config.scss";
 #main-wrap {
     height: 100vh;
-    // position: fixed;
+    width: 100%;
+    //position: fixed;
     // left: $navMenu;
     // top: 75px;
     // right: 0;

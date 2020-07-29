@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Message } from "element-ui";
+import { getToKen, getUserName } from "./app"
 
 //创建axios，赋给变量service
 
@@ -18,7 +19,8 @@ service.interceptors.request.use(
     //后台需要前端这边传相关的参数（在请求头添加参数）
     
     //根据业务需求添加
-    config.headers['userid'] = '11111';
+    config.headers['UserName'] = getUserName();
+    config.headers['Tokey'] = getToKen();
 
     return config;
   },

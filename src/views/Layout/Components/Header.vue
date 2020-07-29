@@ -28,11 +28,19 @@ export default {
 
     //退出按钮事件
     const exit = () =>{
-        root.$store.dispatch("app/exit").then(() =>{
+      root.$confirm('是否退出系统?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           root.$store.dispatch("app/exit").then(() =>{
             root.$router.push({
                 name: 'Login'
             })
         })
+        }).catch(() => {});
+    
+        
     }
 
     return {
