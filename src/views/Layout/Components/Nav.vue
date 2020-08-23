@@ -2,7 +2,7 @@
   <div id="nav-wrap">
     <h1 class="logo"><img src="../../../assets/logo.png" alt="" /></h1>
     <el-menu
-      default-active="1-4-1"
+      :default-active="defaultActive"
       class="el-menu-vertical-demo"
       :collapse="isCollapse"
       background-color="transparent"
@@ -10,20 +10,19 @@
       active-text-color="#fff"
       router
     >
-      <template v-for="(item, index) in routers" >
-        <el-submenu v-if="!item.hidden" :key="item.id" :index="index + ''" >
+      <template v-for="(item, index) in routers">
+        <el-submenu v-if="!item.hidden" :key="item.id" :index="index + ''">
           <!--一级菜单-->
           <template slot="title">
             <svg-icon :iconClass="item.meta.icon" :className="item.meta.icon" />
             <span slot="title">{{ item.meta.name }}</span>
           </template>
           <!--子级菜单-->
-          <el-menu-item
-            v-for="subItem in item.children"
-            :key="subItem.id"
-            :index="subItem.path"
-            >{{ subItem.meta.name }}</el-menu-item
-          >
+          <template v-for="subItem in item.children">
+            <el-menu-item v-if="!subItem.hidden" :key="subItem.id" :index="subItem.path">{{
+              subItem.meta.name
+            }}</el-menu-item>
+          </template>
         </el-submenu>
       </template>
     </el-menu>
@@ -45,9 +44,17 @@ export default {
      */
     const isCollapse = computed(() => root.$store.state.app.isCollapse);
 
+    /* 监听路由变化 */
+    const defaultActive = computed(()=>{
+      const route = root.$route
+      const { path } = route;
+      return path;
+    })
+
     return {
       isCollapse,
       routers,
+      defaultActive
     };
   },
 };
@@ -56,10 +63,10 @@ export default {
 @import "../../../styles/config.scss";
 .logo {
   text-align: center;
-  img { 
+  img {
     margin: 28px auto 25px;
     width: 92px;
-    @include webkit(transition, all .3s ease 0s);
+    @include webkit(transition, all 0.3s ease 0s);
   }
 }
 #nav-wrap {
@@ -68,17 +75,23 @@ export default {
   left: 0;
   height: 100vh;
   background-color: #344a5f;
-  @include webkit(transition, all .3s ease 0s);
+  @include webkit(transition, all 0.3s ease 0s);
   svg {
     font-size: 20px;
     margin-right: 10px;
   }
 }
 .open {
-  #nav-wrap { width: $navMenu; }
+  #nav-wrap {
+    width: $navMenu;
+  }
 }
 .close {
-  #nav-wrap { width: $navMenuMin; }
-  .logo img { width: 60%; }
+  #nav-wrap {
+    width: $navMenuMin;
+  }
+  .logo img {
+    width: 60%;
+  }
 }
 </style>

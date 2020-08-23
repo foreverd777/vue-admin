@@ -6,11 +6,15 @@ Vue.use(Vuex);
 import app from "./modules/app.js";
 import login from "./modules/login.js";
 import common from "./modules/common.js";
+import infoDetailed from "./modules/infoDetailed.js";
+import permission from "./modules/permission.js";
 
 export default new Vuex.Store({
   modules: {
     app,
     login,
-    common
+    common,
+    infoDetailed,
+    permission
  }
 });

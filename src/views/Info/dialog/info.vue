@@ -117,9 +117,8 @@ export default {
             message: "提交成功",
           });
           submitLoading.value = false;
-          emit("getListEmit");
-          //重置表单
-          refs["form"].resetFields();
+          close();//关闭弹窗         
+          emit("getListEmit");//更新信息列表
         })
         .catch((error) => {
           submitLoading.value = false;

@@ -22,7 +22,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="7">
+      <el-col :span="8">
         <div class="label-wrap date">
           <label for="">日期：</label>
           <div class="wrap-content">
@@ -41,18 +41,19 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="5">
         <div class="label-wrap key-word">
           <label for="">关键字：</label>
           <div class="wrap-content">
-            <el-select v-model="data.search_Key" style="width:100%;">
+            <SelectVue :config="data.configOption" />
+            <!--  <el-select v-model="data.search_Key" style="width:100%;">
               <el-option
                 v-for="item in searchOption"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
               ></el-option>
-            </el-select>
+            </el-select> -->
           </div>
         </div>
       </el-col>
@@ -71,9 +72,6 @@
           @click="search"
           >搜索</el-button
         >
-      </el-col>
-      <el-col :span="2">
-        <label slot="label"> &nbsp;</label>
       </el-col>
       <el-col :span="2">
         <el-button
@@ -98,18 +96,18 @@
       style="width: 100%"
     >
       <el-table-column type="selection" width="45"> </el-table-column>
-      <el-table-column prop="title" label="标题" width="430"> </el-table-column>
+      <el-table-column prop="title" label="标题" width="370"> </el-table-column>
       <el-table-column
         prop="categoryId"
         label="类别"
-        width="110"
+        width="90"
         :formatter="toCategory"
       >
       </el-table-column>
       <el-table-column
         prop="createDate"
         label="日期"
-        width="207"
+        width="160"
         :formatter="toData"
       >
       </el-table-column>
@@ -117,11 +115,29 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" type="danger" @click="deleteItem(scope.row.id)"
+          <el-button
+            size="mini"
+            type="danger"
+            @click="deleteItem(scope.row.id)"
+            v-btnPerm="'info:del'"
+            class="hiden-button"
             >删除</el-button
           >
-          <el-button size="mini" type="success" @click="editInfo(scope.row.id)"
+          <el-button
+            size="mini"
+            type="success"
+            @click="editInfo(scope.row.id)"
+            v-btnPerm="'info:edit'"
+            class="hiden-button"
             >编辑</el-button
+          >
+          <el-button
+            size="mini"
+            type="success"
+            @click="editDetailed(scope.row)"
+            v-btnPerm="'info:detailed'"
+            class="hiden-button"
+            >编辑详情</el-button
           >
         </template>
       </el-table-column>
@@ -153,9 +169,9 @@
       :flag.sync="data.dialog_info"
       @close="closeDialog"
       :category="options.category"
-       @getListEmit="getList"
+      @getListEmit="getList"
     />
-     <!-- 修改弹窗 -->
+    <!-- 修改弹窗 -->
     <DialogEditInfo
       :flag.sync="data.dialog_info_edit"
       @close="closeDialog"
@@ -173,9 +189,11 @@ import { global } from "@/utils/global_V3.0";
 import { common } from "@/api/common";
 import { reactive, ref, watch, onMounted } from "@vue/composition-api";
 import { timestampToTime } from "@/utils/common";
+/* 组件 */
+import SelectVue from "@c/Select";
 export default {
   name: "infoIndex",
-  components: { DialogInfo,DialogEditInfo },
+  components: { DialogInfo, DialogEditInfo, SelectVue },
   setup(props, { root }) {
     const { getInfoCategory, categoryItem } = common();
     const { confirm } = global();
@@ -192,7 +210,10 @@ export default {
       loadingData: false,
       deleteInfoId: "",
       dialog_info_edit: false,
-      infoId: ""
+      infoId: "",
+      configOption: {
+        init: ["id", "title"],
+      }, //select传参
     });
 
     const options = reactive({
@@ -300,7 +321,24 @@ export default {
     const editInfo = (id) => {
       data.infoId = id;
       data.dialog_info_edit = true;
-    }
+    };
+
+    /**
+     * 跳转详情页
+     */
+    const editDetailed = (editData) => {
+      //预先存值
+      root.$store.commit("infoDetailed/SET_ID", editData.id);
+      root.$store.commit("infoDetailed/SET_TITLE", editData.title);
+
+      root.$router.push({
+        name: "InfoDetailed",
+        params: {
+          id: editData.id,
+          title: editData.title,
+        },
+      });
+    };
 
     //删除单条数据
     const deleteItem = (id) => {
@@ -366,9 +404,8 @@ export default {
     */
     const toCategory = (row) => {
       let categoryId = row.categoryId;
-      let categoryData = options.category.filter(
-        (item) => item.id == categoryId
-      )[0];
+      let categoryData = options.category.filter((item) => item.id == categoryId)[0];
+      if(!categoryData) { return false }
       return categoryData.category_name;
     };
 
@@ -418,7 +455,8 @@ export default {
       handleSelectionChange,
       search,
       getList,
-      editInfo
+      editInfo,
+      editDetailed,
     };
   },
 };
@@ -436,4 +474,8 @@ export default {
     @include labelDom(right, 100, 40);
   }
 }
+</style>
+<style>
+button.hiden-button {display: none;}
+button.show-button {display: inline-block;}
 </style>

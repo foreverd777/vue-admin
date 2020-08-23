@@ -1,14 +1,17 @@
 import axios from "axios";
 import { Message } from "element-ui";
-import { getToKen, getUserName } from "./app"
+import { getToKen, getUserName } from "./app";
 
 //创建axios，赋给变量service
 
-const BASEURL = process.env.NODE_ENV === "production" ? "" : "/devApi";
+const BASEURL =
+  process.env.NODE_ENV === "production"
+    ? process.env.VUE_APP_APIP
+    : "/devApi";
 
 const service = axios.create({
   baseURL: BASEURL,
-  timeout: 15000 //超时
+  timeout: 15000, //超时
   //网络请求接口
 });
 
@@ -17,10 +20,10 @@ service.interceptors.request.use(
   function(config) {
     // 在发送请求之前做些什么
     //后台需要前端这边传相关的参数（在请求头添加参数）
-    
+
     //根据业务需求添加
-    config.headers['UserName'] = getUserName();
-    config.headers['Tokey'] = getToKen();
+    config.headers["UserName"] = getUserName();
+    config.headers["Tokey"] = getToKen();
 
     return config;
   },
@@ -39,7 +42,7 @@ service.interceptors.response.use(
     // 对响应数据做点什么
     let data = response.data;
     //添加业务需求
-    
+
     if (data.resCode !== 0) {
       Message.error(data.message);
       return Promise.reject(data);

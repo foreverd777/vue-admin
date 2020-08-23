@@ -17,7 +17,31 @@ router.beforeEach((to, from, next) => {
         } else {
             //获取用户角色
             //动态分配路由权限
-            next();
+            if (store.getters['app/roles'].length === 0) {
+                store.dispatch('permission/getRoles').then(response => {                  
+                    let role = response.role;
+                    let button = response.button;
+                    let btnPerm = response.btnPerm;
+                    store.commit("app/SET_ROLES", role);
+                    //store.commit("app/SET_BUTTON", btnPerm);                    
+                    store.dispatch('permission/createRouter',role).then(response => {
+                        let addRouters = store.getters['permission/addRouters'];
+                        let allRouters = store.getters['permission/allRouters'];
+                        //路由更新
+                        router.options.routes = allRouters;
+                        //添加动态路由
+                        router.addRoutes(addRouters);
+                        next({ ...to, replace: true });
+                         // es6扩展运算符，防止内容发生变化的情况
+                        // 不被记录历史记录
+                    })
+                })
+
+            } else {
+                next();
+            }
+            
+            //next();
         }
         
     } else {

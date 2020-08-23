@@ -1,7 +1,13 @@
 <template>
     <div id="main-wrap">
         <div class="main-content">
-            <div class="content"><router-view /></div>
+            <div class="content" include="infoIndex">
+                <!-- 子路由显示区 -->
+                <keep-alive>
+                    <!-- 需要缓存 -->
+                    <router-view />
+                </keep-alive>              
+                </div>
         </div>
     </div>    
 </template>

@@ -10,7 +10,7 @@
         </div>
         {{ username }}
       </div>
-      <div class="header-icon pull-left" @click="exit">
+      <div class="header-icon pull-left" @click="logout">
         <svg-icon iconClass="exit" className="exit" />
       </div>
     </div>
@@ -27,13 +27,14 @@ export default {
     };
 
     //退出按钮事件
-    const exit = () =>{
+    const logout = () =>{
       root.$confirm('是否退出系统?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-           root.$store.dispatch("app/exit").then(() =>{
+           root.$store.dispatch("app/logout").then(response =>{
+             console.log(response)
             root.$router.push({
                 name: 'Login'
             })
@@ -46,7 +47,7 @@ export default {
     return {
       navMenuState,
       username,
-      exit
+      logout
     };
   },
 };

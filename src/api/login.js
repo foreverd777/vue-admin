@@ -15,6 +15,24 @@ export function GetSms(data) {
 /**
  * 获取用户角色
  */
+export function GetUserRole(data={}) {
+  return service.request({
+    method: "post",
+    url: "/userRole/",
+    data: data
+  });
+}
+
+/**
+ * 退出
+ */
+export function Logout(data) {
+  return service.request({
+    method: "post",
+    url: "/logout/",
+    data: data
+  });
+}
 
 /**
  * 登录

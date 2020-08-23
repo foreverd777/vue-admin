@@ -96,7 +96,7 @@
 <script>
 import sha1 from 'js-sha1';
 import { GetSms, Register, Login } from "@/api/login";
-import { reactive, ref, isRef, toRefs, onMounted } from "@vue/composition-api";
+import { reactive, ref, isRef, toRefs, onMounted, onUnmounted } from "@vue/composition-api";
 import {
   stripscript,
   validateEmail,
@@ -279,9 +279,14 @@ export default {
           loginButtonStatus.value = false;
           //调定时器，倒计时
           countDown(5);
-          console.log(response);
         })
         .catch((error) => {
+          //启用登录或注册按钮
+          loginButtonStatus.value = false;
+          updateButtonStatus({  
+            status: false,
+            text: "再次获取"
+          })
           console.log(error);
         });
     };
@@ -418,6 +423,10 @@ export default {
      */
     //挂载完成后
     onMounted(() => {});
+    //销毁页面后
+    onUnmounted(()=>{
+      clearInterval(timer.value);
+    })
 
     return {
       menuTab,

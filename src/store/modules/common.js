@@ -1,4 +1,13 @@
 import { GetCategory } from "@/api/news";
+
+const state = {
+  qiniuUrl: "http://www-web-jshtml-cn-idva7mx.web-jshtml.cn/"
+}
+
+const getters = {
+  qiniuUrl: state => state.qiniuUrl
+}
+
 const actions = {
     //异步，请求接口返回数据后，接着去做别的事情
     getInfoCategory(content, requestData) {
@@ -16,7 +25,9 @@ const actions = {
   }
   
   export default {
-    namespaced: true,
-    actions
+  namespaced: true,
+  state,
+  getters,
+  actions
   };
   
